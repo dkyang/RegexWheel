@@ -4,89 +4,9 @@
 #include <iostream>
 #include <assert.h>
 
-// 嵌套类在外围类头文件中声明，在.cc文件中定义
-// 见google C++ style中对嵌套类的说明
-
-// nested class of NFA
-class NFA::State 
-{
-public:
-	State(int state) 
-		: state_(state)
-	{	}
-
-	void AddOutEdge(State *to, char alpha);
-
-	// epsilon-edge
-	void AddOutEdge(State *to);
-
-	~State();
-
-	int state_;
-	//type: begin, terminal, normal
-	std::vector<Edge*> out_edges_;
-};
-
-class NFA::Edge
-{
-public:
-	Edge(State *from, State *to, char alpha) 
-		: from_(from), to_(to), is_epsilon_(false), alpha_(alpha)
-	{	}
-
-	// epsilon edge
-	Edge(State *from, State *to) 
-		: from_(from), to_(to), is_epsilon_(true)
-	{	}
-
-	bool is_epsilon()
-	{
-		return is_epsilon_;
-	}
-
-	State *from_;
-	State *to_;
-	bool is_epsilon_;
-	char alpha_;
-};
-
-// 辅助数据结构，用于在re->NFA的转换过程中保存中间结果
-class NFA::StateSet {
-public:
-	StateSet(State *start, State *end) 
-		: start_(start), end_(end) 
-	{	}
-	State *start_;
-	State *end_;
-};
-
-void NFA::State::AddOutEdge(State *to, char alpha)
-{
-	Edge *edge = new Edge(this, to, alpha);
-	out_edges_.push_back(edge);
-}
-
-// epsilon-edge
-void NFA::State::AddOutEdge(State *to) 
-{
-	Edge *edge = new Edge(this, to);
-	out_edges_.push_back(edge);
-}
-
-NFA::State::~State() 
-{
-	// Edge的内存分配全都在State内部，所以可以在析构函数中释放，
-	// 保证没有内存泄露
-	for (std::vector<Edge*>::iterator vit = out_edges_.begin(); 
-		vit != out_edges_.end(); vit++) {
-			delete *vit;
-			*vit = NULL;
-	}
-}
-
 
 NFA::NFA(RegexExpression *re) 
-	: state_count_(0)
+//	: FA()
 {
 	const char* symbol;
 	while ((symbol = re->GetNextSymbol()) != NULL) {
@@ -175,7 +95,7 @@ void NFA::HandelSpecialSymbol(char symbol)
 }
 
 // FIXME:错误处理
-NFA::StateSet* NFA::MakeStateSet(StateSet *set1, StateSet *set2, char symbol)
+FA::StateSet* NFA::MakeStateSet(StateSet *set1, StateSet *set2, char symbol)
 {
 	StateSet* res_state_set = NULL;
 	switch (symbol) {
@@ -213,7 +133,7 @@ NFA::StateSet* NFA::MakeStateSet(StateSet *set1, StateSet *set2, char symbol)
 	return res_state_set;
 }
 
-NFA::StateSet* NFA::MakeSimpleStateSet(char alpha) 
+FA::StateSet* NFA::MakeSimpleStateSet(char alpha) 
 {
 	State *start_state = AllocState();
 	State *end_state = AllocState();
@@ -222,7 +142,7 @@ NFA::StateSet* NFA::MakeSimpleStateSet(char alpha)
 	return new_set;
 }
 
-NFA::StateSet* NFA::Union(StateSet *set1, StateSet *set2)
+FA::StateSet* NFA::Union(StateSet *set1, StateSet *set2)
 {
 	State *start_state = AllocState();
 	start_state->AddOutEdge(set1->start_);
@@ -236,14 +156,14 @@ NFA::StateSet* NFA::Union(StateSet *set1, StateSet *set2)
 	return new_set;
 }
 
-NFA::StateSet* NFA::Concatenation(StateSet *set1, StateSet *set2) 
+FA::StateSet* NFA::Concatenation(StateSet *set1, StateSet *set2) 
 {
 	set1->end_->AddOutEdge(set2->start_);
 	StateSet *new_set = new StateSet(set1->start_, set2->end_);
 	return new_set;
 }
 
-NFA::StateSet* NFA::Closure(StateSet *set)
+FA::StateSet* NFA::Closure(StateSet *set)
 {
 	State *start_state = AllocState();
 	State *end_state = AllocState();
@@ -253,22 +173,6 @@ NFA::StateSet* NFA::Closure(StateSet *set)
 	set->end_->AddOutEdge(end_state);
 	StateSet *new_set = new StateSet(start_state, end_state);
 	return new_set;
-}
-
-NFA::State* NFA::AllocState() 
-{
-	State *state = new State(state_count_++);
-	state_list_.push_back(state); // 记录，以便释放内存
-	return state;
-}
-
-// 释放动态分配的State内存
-void NFA::FreeStates()
-{
-	for (std::list<State*>::iterator lit = state_list_.begin(); 
-		lit != state_list_.end(); lit++) {
-		delete *lit;
-	}
 }
 
 //-----------------------debug-------------------------------//

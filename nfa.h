@@ -1,6 +1,8 @@
 #ifndef _NFA_H_
 #define _NFA_H_
 
+#include "fa.h"
+
 #include <list>
 #include <vector>
 #include <stack>
@@ -17,15 +19,10 @@ TODO：
 	StateSet内存交给shared_ptr处理
 */
 
-class FA 
-{
-
-};
-
 
 class RegexExpression;
 
-class NFA
+class NFA : public FA
 {
 public:
 	// 通过正则表达式生成NFA
@@ -42,22 +39,12 @@ public:
 	}
 private:
 
-	class State;
-	class Edge;
-	class StateSet;
 
-	//bool is_concatenation_;
-	int state_count_;
 	//RegexExpression* re_;
-	// 保存动态分配的数据结构，方便释放
-	std::list<State*> state_list_;
+
 	//const char *input_str_;
 	std::stack<char> special_symbol_stack_;
 	std::stack<StateSet*> state_set_stack_;
-
-	//开始状态和终止状态
-	State* start_state_;
-	State* end_state_;
 
 	// FIXME:定义为内联
 	void HandleInputLeftBracket() {
@@ -84,11 +71,6 @@ private:
 	StateSet* Concatenation(StateSet *set1, StateSet *set2);
 
 	StateSet * Closure(StateSet *set);
-
-	State * AllocState();
-
-	// 释放动态分配的State内存
-	void FreeStates();
 
 	// for debug
 	// 深度优先遍历输出NFA的各边
