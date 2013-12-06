@@ -6,7 +6,16 @@
 
 // NFA和DFA的基类
 class FA 
-{
+{	
+// nested class
+public:
+	class State;
+
+protected:
+
+	class Edge;
+	class StateSet;
+
 public:
 	FA() : state_count_(0), start_state_(NULL)
 	{	}
@@ -15,18 +24,10 @@ public:
 		return state_count_;
 	}
 
-	State *start_state() {
-		return start_state_;
-	}
+	//class State;
+	State *start_state();
 
-protected:
-
-	// nested class of NFA
-	// 前向声明
-	class State;
-	class Edge;
-	class StateSet;
-
+	// nested class
 	class State 
 	{
 	public:
@@ -47,6 +48,7 @@ protected:
 		bool is_end_state_;
 	};
 
+protected:
 	class Edge
 	{
 	public:

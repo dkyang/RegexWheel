@@ -24,6 +24,10 @@ FA::State::~State()
 	}
 }
 
+FA::State* FA::start_state() {
+	return start_state_;
+}
+
 FA::State* FA::AllocState() 
 {
 	State *state = new State(state_count_++);

@@ -31,11 +31,12 @@ public:
 
 	void GetStateEpsilonClosure(std::vector<std::vector<int> >& eps_vec) {
 		eps_vec.resize(state_count_);
+		std::vector<bool> mark(state_count_, false);
 		for (std::list<State*>::iterator lit = state_list_.begin(); 
 				lit != state_list_.end(); lit++) {
 			State *state = *lit;
 			std::fill(mark.begin(), mark.end(), false);
-			vector<int> eps_closure;
+			std::vector<int> eps_closure;
 			RecursiveEps(state, mark, eps_closure);
 			eps_vec[state->state_] = eps_closure;
 		}
@@ -44,7 +45,7 @@ public:
 	// 得到按状态序号排序的状态数组
 	void GetSortStates(std::vector<State*>& state_vec) {
 		state_vec.resize(state_count_);
-		for (std::list<State*>::iterator lit = state_list_.begin;
+		for (std::list<State*>::iterator lit = state_list_.begin();
 				lit != state_list_.end(); lit++) {
 			State *state = *lit;
 			state_vec[state->state_] = state;
@@ -52,7 +53,7 @@ public:
 	}
 
 	int GetEndState() {
-		return end_state_vec_[0].state_;
+		return end_state_vec_[0]->state_;
 	}
 
 	~NFA() {
