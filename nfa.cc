@@ -43,7 +43,7 @@ NFA::NFA(RegexExpression *re)
 	assert(state_set_stack_.size() == 1);
 	StateSet* res_state_set = state_set_stack_.top();
 	start_state_ = res_state_set->start_;
-	//end_state_ = res_state_set->end_;
+	end_state_vec_.push_back(res_state_set->end_);
 	res_state_set->end_->is_end_state_ = true; // 为终止状态
 
 	delete res_state_set; // FIXME: 使用完就释放内存，改为shared_ptr<>
@@ -194,15 +194,15 @@ void NFA::TraverseNFA(State *state, std::vector<bool>& mark)
 	mark[state->state_] = true;
 
 	for (std::vector<Edge*>::iterator eit = state->out_edges_.begin(); 
-		eit != state->out_edges_.end(); eit++) {
-			Edge *edge = *eit;
-			std::cout << edge->from_->state_ << " -> " << edge->to_->state_
-				<< " : ";
-			if (edge->is_epsilon()) 
-				std::cout << "epsilon" << std::endl;
-			else
-				std::cout << edge->alpha_ << std::endl;
-			if (!mark[edge->to_->state_])
-				TraverseNFA(edge->to_, mark);
+			eit != state->out_edges_.end(); eit++) {
+		Edge *edge = *eit;
+		std::cout << edge->from_->state_ << " -> " << edge->to_->state_
+			<< " : ";
+		if (edge->is_epsilon()) 
+			std::cout << "epsilon" << std::endl;
+		else
+			std::cout << edge->alpha_ << std::endl;
+		if (!mark[edge->to_->state_])
+			TraverseNFA(edge->to_, mark);
 	}
 }

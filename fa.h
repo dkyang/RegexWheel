@@ -11,6 +11,14 @@ public:
 	FA() : state_count_(0), start_state_(NULL)
 	{	}
 
+	int state_count() {
+		return state_count_;
+	}
+
+	State *start_state() {
+		return start_state_;
+	}
+
 protected:
 
 	// nested class of NFA
@@ -80,7 +88,7 @@ protected:
 
 	//¿ªÊ¼×´Ì¬ºÍÖÕÖ¹×´Ì¬
 	State* start_state_;
-	//State* end_state_;
+	std::vector<State*> end_state_vec_;
 
 	State * AllocState();
 

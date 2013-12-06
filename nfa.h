@@ -29,14 +29,38 @@ public:
 	// FIXME: 不放在构造函数中
 	NFA(RegexExpression *re);
 
-	// for debug
-	void PrintNFA();
+	void GetStateEpsilonClosure(std::vector<std::vector<int> >& eps_vec) {
+		eps_vec.resize(state_count_);
+		for (std::list<State*>::iterator lit = state_list_.begin(); 
+				lit != state_list_.end(); lit++) {
+			State *state = *lit;
+			std::fill(mark.begin(), mark.end(), false);
+			vector<int> eps_closure;
+			RecursiveEps(state, mark, eps_closure);
+			eps_vec[state->state_] = eps_closure;
+		}
+	}
 
-	//State* 
+	// 得到按状态序号排序的状态数组
+	void GetSortStates(std::vector<State*>& state_vec) {
+		state_vec.resize(state_count_);
+		for (std::list<State*>::iterator lit = state_list_.begin;
+				lit != state_list_.end(); lit++) {
+			State *state = *lit;
+			state_vec[state->state_] = state;
+		}
+	}
+
+	int GetEndState() {
+		return end_state_vec_[0].state_;
+	}
 
 	~NFA() {
 		FreeStates();
 	}
+
+	// for debug
+	void PrintNFA();
 private:
 
 
@@ -71,6 +95,18 @@ private:
 	StateSet* Concatenation(StateSet *set1, StateSet *set2);
 
 	StateSet * Closure(StateSet *set);
+
+	void RecursiveEps(State *state, std::vector<bool>& mark, std::vector<int>& eps_closure) {
+		mark[state->state_] = true;
+		eps_closure.push_back(state->state_);
+
+		for (std::vector<Edge*>::iterator eit = state->out_edges_.begin(); 
+			eit != state->out_edges_.end(); eit++) {
+			Edge *edge = *eit;
+			if (!mark[edge->to_->state_] && edge->is_epsilon())
+				RecursiveEps(edge->to_, mark, eps_closure);
+		}
+	}
 
 	// for debug
 	// 深度优先遍历输出NFA的各边
