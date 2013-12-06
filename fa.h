@@ -27,6 +27,9 @@ public:
 	//class State;
 	State *start_state();
 
+	// for debug
+	void PrintFA();
+
 	// nested class
 	class State 
 	{
@@ -86,7 +89,7 @@ protected:
 	int state_count_;
 
 	// 保存动态分配的数据结构，方便释放
-	std::list<State*> state_list_;
+	std::vector<State*> state_vec_;
 
 	//开始状态和终止状态
 	State* start_state_;
@@ -96,6 +99,12 @@ protected:
 
 	// 释放动态分配的State内存
 	void FreeStates();
+
+private:
+	// for debug
+	// 深度优先遍历输出NFA的各边
+	void TraverseFA(State *state, std::vector<bool>& mark);
+
 };
 
 #endif

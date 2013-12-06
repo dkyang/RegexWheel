@@ -5,6 +5,7 @@
 
 //#include "regex_expression.h"
 #include "nfa.h"
+#include "dfa.h"
 #include "regex_expression.h"
 
 TEST(RegexExpressionTest, GetNextSymbol)
@@ -75,8 +76,12 @@ int main(int argc, char* argv[])
 	//testing::InitGoogleTest(&argc, argv);
 	//return RUN_ALL_TESTS();
 	//"(a*|b)c"Í¨¹ý
-	RegexExpression re("((a*|b)c)*da|c*eaxsdfsrbhaosdfoasfhdioiweyr");
+	RegexExpression re("((a*|b)c)");
 	NFA nfa(&re);
-	nfa.PrintNFA();
+	nfa.PrintFA();
+
+	DFA dfa;
+	dfa.ConstructFromNFA(&nfa);
+	dfa.PrintFA();
 }
 

@@ -32,9 +32,9 @@ public:
 	void GetStateEpsilonClosure(std::vector<std::vector<int> >& eps_vec) {
 		eps_vec.resize(state_count_);
 		std::vector<bool> mark(state_count_, false);
-		for (std::list<State*>::iterator lit = state_list_.begin(); 
-				lit != state_list_.end(); lit++) {
-			State *state = *lit;
+		for (std::vector<State*>::iterator vit = state_vec_.begin(); 
+				vit != state_vec_.end(); vit++) {
+			State *state = *vit;
 			std::fill(mark.begin(), mark.end(), false);
 			std::vector<int> eps_closure;
 			RecursiveEps(state, mark, eps_closure);
@@ -45,9 +45,9 @@ public:
 	// 得到按状态序号排序的状态数组
 	void GetSortStates(std::vector<State*>& state_vec) {
 		state_vec.resize(state_count_);
-		for (std::list<State*>::iterator lit = state_list_.begin();
-				lit != state_list_.end(); lit++) {
-			State *state = *lit;
+		for (std::vector<State*>::iterator vit = state_vec_.begin();
+				vit != state_vec_.end(); vit++) {
+			State *state = *vit;
 			state_vec[state->state_] = state;
 		}
 	}
@@ -60,8 +60,7 @@ public:
 		FreeStates();
 	}
 
-	// for debug
-	void PrintNFA();
+	
 private:
 
 
@@ -108,10 +107,6 @@ private:
 				RecursiveEps(edge->to_, mark, eps_closure);
 		}
 	}
-
-	// for debug
-	// 深度优先遍历输出NFA的各边
-	void TraverseNFA(State *state, std::vector<bool>& mark);
 };
 
 #endif

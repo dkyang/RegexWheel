@@ -177,32 +177,3 @@ FA::StateSet* NFA::Closure(StateSet *set)
 	return new_set;
 }
 
-//-----------------------debug-------------------------------//
-void NFA::PrintNFA()
-{
-	std::cout << "start state is: " << start_state_->state_ << std::endl;
-	//std::cout << "end state is: " << end_state_->state_ << std::endl;
-	//State* pt = start_state_;
-	std::vector<bool> mark(state_count_, false);
-	TraverseNFA(start_state_, mark);
-}
-
-void NFA::TraverseNFA(State *state, std::vector<bool>& mark)
-{
-	//if (state == end_state_)
-	//	return;
-	mark[state->state_] = true;
-
-	for (std::vector<Edge*>::iterator eit = state->out_edges_.begin(); 
-			eit != state->out_edges_.end(); eit++) {
-		Edge *edge = *eit;
-		std::cout << edge->from_->state_ << " -> " << edge->to_->state_
-			<< " : ";
-		if (edge->is_epsilon()) 
-			std::cout << "epsilon" << std::endl;
-		else
-			std::cout << edge->alpha_ << std::endl;
-		if (!mark[edge->to_->state_])
-			TraverseNFA(edge->to_, mark);
-	}
-}

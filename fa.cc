@@ -1,5 +1,7 @@
 #include "fa.h"
 
+#include <iostream>
+
 void FA::State::AddOutEdge(State *to, char alpha)
 {
 	Edge *edge = new Edge(this, to, alpha);
@@ -31,15 +33,50 @@ FA::State* FA::start_state() {
 FA::State* FA::AllocState() 
 {
 	State *state = new State(state_count_++);
-	state_list_.push_back(state); // 记录，以便释放内存
+	state_vec_.push_back(state); // 记录，以便释放内存
 	return state;
 }
 
 // 释放动态分配的State内存
 void FA::FreeStates()
 {
-	for (std::list<State*>::iterator lit = state_list_.begin(); 
-		lit != state_list_.end(); lit++) {
-			delete *lit;
+	for (std::vector<State*>::iterator vit = state_vec_.begin(); 
+		vit != state_vec_.end(); vit++) {
+			delete *vit;
+	}
+}
+
+//-----------------------debug-------------------------------//
+void FA::PrintFA()
+{
+	std::cout << "start state is: " << start_state_->state_ << std::endl;
+	//std::cout << "end state is: " << end_state_->state_ << std::endl;
+	//State* pt = start_state_;
+	std::vector<bool> mark(state_count_, false);
+	TraverseFA(start_state_, mark);
+
+	std::cout << "end state is: ";
+	for (size_t i = 0; i < end_state_vec_.size(); i++)
+		std::cout << end_state_vec_[i]->state_ << ' ';
+	std::cout << std::endl;
+}
+
+void FA::TraverseFA(State *state, std::vector<bool>& mark)
+{
+	//if (state == end_state_)
+	//	return;
+	mark[state->state_] = true;
+
+	for (std::vector<Edge*>::iterator eit = state->out_edges_.begin(); 
+		eit != state->out_edges_.end(); eit++) {
+			Edge *edge = *eit;
+			std::cout << edge->from_->state_ << " -> " << edge->to_->state_
+				<< " : ";
+			if (edge->is_epsilon()) 
+				std::cout << "epsilon" << std::endl;
+			else
+				std::cout << edge->alpha_ << std::endl;
+			if (!mark[edge->to_->state_])
+				TraverseFA(edge->to_, mark);
 	}
 }
