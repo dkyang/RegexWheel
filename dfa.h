@@ -9,6 +9,14 @@ public:
 	void ConstructFromNFA(NFA *nfa) {
 
 	}
+private:
+	typedef std::vector<std::vector<int> > TwoDimVec;
+	
+	TwoDimVec eps_vec_;
+
+	void ComputeEps(NFA* nfa) {
+		
+	}
 };
 
 

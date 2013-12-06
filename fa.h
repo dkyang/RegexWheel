@@ -8,7 +8,7 @@
 class FA 
 {
 public:
-	FA() : state_count_(0), start_state_(NULL), end_state_(NULL)
+	FA() : state_count_(0), start_state_(NULL)
 	{	}
 
 protected:
@@ -23,7 +23,7 @@ protected:
 	{
 	public:
 		State(int state) 
-			: state_(state)
+			: state_(state), is_end_state_(false)
 		{	}
 
 		void AddOutEdge(State *to, char alpha);
@@ -36,6 +36,7 @@ protected:
 		int state_;
 		//type: begin, terminal, normal
 		std::vector<Edge*> out_edges_;
+		bool is_end_state_;
 	};
 
 	class Edge
@@ -79,7 +80,7 @@ protected:
 
 	//¿ªÊ¼×´Ì¬ºÍÖÕÖ¹×´Ì¬
 	State* start_state_;
-	State* end_state_;
+	//State* end_state_;
 
 	State * AllocState();
 

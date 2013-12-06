@@ -43,7 +43,9 @@ NFA::NFA(RegexExpression *re)
 	assert(state_set_stack_.size() == 1);
 	StateSet* res_state_set = state_set_stack_.top();
 	start_state_ = res_state_set->start_;
-	end_state_ = res_state_set->end_;
+	//end_state_ = res_state_set->end_;
+	res_state_set->end_->is_end_state_ = true; // 为终止状态
+
 	delete res_state_set; // FIXME: 使用完就释放内存，改为shared_ptr<>
 }
 
@@ -179,7 +181,7 @@ FA::StateSet* NFA::Closure(StateSet *set)
 void NFA::PrintNFA()
 {
 	std::cout << "start state is: " << start_state_->state_ << std::endl;
-	std::cout << "end state is: " << end_state_->state_ << std::endl;
+	//std::cout << "end state is: " << end_state_->state_ << std::endl;
 	//State* pt = start_state_;
 	std::vector<bool> mark(state_count_, false);
 	TraverseNFA(start_state_, mark);
@@ -187,8 +189,8 @@ void NFA::PrintNFA()
 
 void NFA::TraverseNFA(State *state, std::vector<bool>& mark)
 {
-	if (state == end_state_)
-		return;
+	//if (state == end_state_)
+	//	return;
 	mark[state->state_] = true;
 
 	for (std::vector<Edge*>::iterator eit = state->out_edges_.begin(); 
