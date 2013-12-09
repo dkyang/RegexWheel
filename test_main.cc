@@ -8,6 +8,8 @@
 #include "dfa.h"
 #include "regex_expression.h"
 
+#include <string>
+
 TEST(RegexExpressionTest, GetNextSymbol)
 {
 	EXPECT_STREQ("a.b", RegexExpressionGenSymbol("ab").c_str());
@@ -76,7 +78,10 @@ int main(int argc, char* argv[])
 	//testing::InitGoogleTest(&argc, argv);
 	//return RUN_ALL_TESTS();
 	//"(a*|b)c"Í¨¹ý
-	RegexExpression re("((a*|b)c)");
+	//std::string re_str = "ab"; // pass
+	std::string re_str = "((a*|b)c)*|b"; // pass
+	//std::string re_str = "a*"; // pass
+	RegexExpression re(re_str.c_str());
 	NFA nfa(&re);
 	nfa.PrintFA();
 

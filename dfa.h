@@ -71,8 +71,11 @@ public:
 						if (cmp_state[k] != res_state[k])
 							break;
 					}
-					if (k == cmp_state.size())
+					// 说明res_state == cmp_state
+					if (k == cmp_state.size()) {
 						is_in_active_states = true;
+						break;
+					}
 				}
 				// 相等时，active_states[j]就是找到的相同State
 				State *to_state;
